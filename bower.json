@@ -1,0 +1,23 @@
+{
+  "name": "pocketapi",
+  "version": "1.0.0",
+  "homepage": "https://github.com/ruipgil/pocketapi",
+  "authors": [
+    "Rui Gil"
+  ],
+  "description": "Pocket's API in node",
+  "main": "pocket.js",
+  "keywords": [
+    "pocket",
+    "api",
+    "pocketapi"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

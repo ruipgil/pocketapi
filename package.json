@@ -1,0 +1,24 @@
+{
+  "name": "pocketapi",
+  "version": "1.0.0",
+  "description": "Pocket's API in node",
+  "main": "pocket.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ruipgil/pocketapi"
+  },
+  "keywords": [
+    "pocket",
+    "api",
+    "getpocket"
+  ],
+  "author": "Rui Gil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ruipgil/pocketapi/issues"
+  },
+  "homepage": "https://github.com/ruipgil/pocketapi"
+}
