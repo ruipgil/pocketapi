@@ -1,6 +1,6 @@
 {
   "name": "pocketapi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pocket's API in node",
   "main": "pocket.js",
   "scripts": {
