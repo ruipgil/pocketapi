@@ -178,9 +178,9 @@
 				var options = urlUtils.parse(url);
 				options.method = "POST";
 				options.headers = {
-					"Content-Type", "application/json; charset=UTF-8",
-					"X-Accept", "application/json"
-				}
+					"Content-Type": "application/json; charset=UTF-8",
+					"X-Accept": "application/json"
+				};
 				var req = request(options, function(res) {
 					var data = "";
 					res.on("data", function(chunk) {
