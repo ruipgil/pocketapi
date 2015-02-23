@@ -172,7 +172,7 @@
 
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
 		POSTrequest = (function() {
-			var request = require("http").request,
+			var request = require("https").request,
 				urlUtils = require("url");
 			return function(url, data, callback) {
 				var options = urlUtils.parse(url);
@@ -185,10 +185,13 @@
 					var data = "";
 					res.on("data", function(chunk) {
 						data += chunk;
-						callback(undefined, chunk);
 					});
 					res.on("end", function() {
-						callback(undefined, JSON.parse(data));
+						try{
+							callback(undefined, JSON.parse(data));
+						}catch(err) {
+							callback(err);
+						}
 					});
 				});
 				req.on("error", function(e) {
