@@ -1,6 +1,6 @@
 (function() {
 	var Pocket,
-		POSTrequest;
+		POSTrequest, open;
 
 	var createParams = function(consumer_key, access_token, obj) {
 		obj = obj || {};
@@ -107,6 +107,90 @@
 		}
 	};
 	/**
+	 * Automates the login process.
+	 * It receives a consumer key; a redirect uri, to redirect the
+	 *   user after authorizing or not the application; a "middle"
+	 *   callback, and the final callback.
+	 * The middle callback receives the URI so that the user can allow
+	 *   the use of the application and a callback, to be called after
+	 *   the user has authorized or not.
+	 * The final callback has as arguments an error, if one has
+	 *   occurred, the access token and the username, these two are
+	 *   only defined if no error occurred.
+	 *
+	 * @param  {!string} consumer_key Application's consumer key.
+	 * @param  {!string} redirect_uri Redirect URI.
+	 * @param  {!function(!string, !function())} middleCallback Middle
+	 *   process callback.
+	 * @param  {!function(=Error, =string, =string)} callback Callback
+	 *   function.
+	 */
+	Pocket.auth.custom_login = function(consumer_key, redirect_uri, middleCallback, callback) {
+		//console.log("c_login");
+		Pocket.auth.request(consumer_key, redirect_uri, function(err, code) {
+			//console.log("received request");
+			var done = function() {
+				//console.log("middleCallback responded");
+				Pocket.auth.authorize(consumer_key, code, function(err, access_token, username) {
+					//console.log("auth");
+					callback(err, access_token, username);
+				});
+			}
+
+			if(err) {
+				console.log("err");
+				console.log(err);
+				callback(err);
+			} else {
+				middleCallback(Pocket.auth.getAuthorizeURL(code, encodeURIComponent(redirect_uri)), done);
+			}
+		})
+	};
+	// client
+	Pocket.auth.loginBrowser = function(consumer_key, callback) {
+		var exec;
+		var middle = function(url, done) {
+			open(url);
+			done();
+		};
+		//12.5seconds, ie. try 25 times with an interval of 500ms
+		var count = 0, MAX = 25;
+		var clbck = function(err, access_token, username) {
+			if(err && count<MAX) { //is appropriate error
+				count++;
+				setTimeout(function() {
+					exec();
+				}, 500);
+			}
+			callback(err, access_token, username);
+		};
+		exec = function() {
+			Pocket.auth.custom_login(consumer_key, "http://google.com", middle, clbck);
+		}
+		exec();
+	};
+	// server
+	Pocket.auth.loginNode = function(consumer_key, callback, port) {
+		var express = require('express');
+		port = port || 8081;
+		Pocket.auth.custom_login(
+			consumer_key,
+			"http://localhost:"+port+"",
+			function(url, done) {
+				var server;
+				var app = express();
+				app.get('*', function(req, res) {
+					done();
+					res.end('<script>window.close();</script>');
+					server.close();
+				});
+				server = app.listen(port);
+				server.timeout = 1200;
+				open(url);
+			},
+			callback);
+	};
+	/**
 	 * State of an item.
 	 *
 	 * @type {!Object}
@@ -171,9 +255,10 @@
 	};
 
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
+		var request = require("https").request,
+			urlUtils = require("url"),
+			exec = require('child_process').exec;
 		POSTrequest = (function() {
-			var request = require("https").request,
-				urlUtils = require("url");
 			return function(url, data, callback) {
 				var options = urlUtils.parse(url);
 				options.method = "POST";
@@ -201,6 +286,9 @@
 				req.end();
 			};
 		})();
+		open = function(url) {
+			exec('xdg-open "'+url+'"');
+		};
 		module.exports = Pocket;
 	} else {
 		POSTrequest = function(url, data, callback) {
@@ -224,6 +312,10 @@
 					callback(err, response);
 				}
 			}
+		};
+		open = function(url) {
+			var win = window.open(url, '_blank');
+			win.focus();
 		};
 		window.Pocket = Pocket;
 	}

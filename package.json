@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/ruipgil/pocketapi/issues"
   },
-  "homepage": "https://github.com/ruipgil/pocketapi"
+  "homepage": "https://github.com/ruipgil/pocketapi",
+  "dependencies": {
+    "express": "^4.12.0"
+  }
 }
