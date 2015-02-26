@@ -126,20 +126,14 @@
 	 *   function.
 	 */
 	Pocket.auth.custom_login = function(consumer_key, redirect_uri, middleCallback, callback) {
-		//console.log("c_login");
 		Pocket.auth.request(consumer_key, redirect_uri, function(err, code) {
-			//console.log("received request");
 			var done = function() {
-				//console.log("middleCallback responded");
 				Pocket.auth.authorize(consumer_key, code, function(err, access_token, username) {
-					//console.log("auth");
 					callback(err, access_token, username);
 				});
 			}
 
 			if(err) {
-				console.log("err");
-				console.log(err);
 				callback(err);
 			} else {
 				middleCallback(Pocket.auth.getAuthorizeURL(code, encodeURIComponent(redirect_uri)), done);
@@ -161,6 +155,7 @@
 				setTimeout(function() {
 					exec();
 				}, 500);
+				return;
 			}
 			callback(err, access_token, username);
 		};
@@ -255,10 +250,9 @@
 	};
 
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
-		var request = require("https").request,
-			urlUtils = require("url"),
-			exec = require('child_process').exec;
 		POSTrequest = (function() {
+			var request = require("https").request,
+				urlUtils = require("url");
 			return function(url, data, callback) {
 				var options = urlUtils.parse(url);
 				options.method = "POST";
@@ -286,9 +280,7 @@
 				req.end();
 			};
 		})();
-		open = function(url) {
-			exec('xdg-open "'+url+'"');
-		};
+		open = require("open");
 		module.exports = Pocket;
 	} else {
 		POSTrequest = function(url, data, callback) {
