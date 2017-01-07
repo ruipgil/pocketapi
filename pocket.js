@@ -11,7 +11,7 @@
 
 	var URI = {
 			ADD: "https://getpocket.com/v3/add",
-			MODIFY: "https://getpocket.com/v3/modify",
+			MODIFY: "https://getpocket.com/v3/send",
 			RETRIEVE: "https://getpocket.com/v3/get",
 			REQUEST: "https://getpocket.com/v3/oauth/request",
 			AUTHORIZE: "https://getpocket.com/v3/oauth/authorize",
@@ -248,6 +248,21 @@
 		YES: 1,
 		NO: 0
 	};
+
+	Pocket.ACTION = {
+		ADD: "add",
+		ARCHIVE: "archive",
+		READD: "readd",
+		FAVORITE: "favorite",
+		UNFAVORITE: "unfavorite",
+		DELETE: "delete",
+
+		TAGS_ADD: "tags_add",
+		TAGS_REMOVE: "tags_remove",
+		TAGS_REPLACE: "tags_replace",
+		TAGS_CLEAR: "tags_clear",
+		TAG_RENAME: "tag_rename"
+	}
 
 	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
 		POSTrequest = (function() {
